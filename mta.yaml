@@ -1,0 +1,50 @@
+ID: ProblemManagementService
+_schema-version: '2.1'
+version: 0.0.1
+
+modules:
+  - name: ProblemManagementService
+    type: java
+    build-parameters:
+      builder: custom
+      commands:
+        - mvn -B package -P cloud
+      build-result: target/*.war
+    path: PMService
+    parameters:
+      host: psd-ias-problemmanagementservice-${space}
+      profile: cloud
+      health-check-type: http
+      health-check-http-endpoint: /api/health
+      health-check-timeout: 180
+    requires:
+      - name: xsuaa
+      - name: mongoLite
+      - name: IASLog
+      - name: LdapConnect
+      - name: dest_FLP_MIT
+      - name: IASFeatureFlag
+    provides:
+      - name: pm_service_api
+        public: true
+        properties:
+          publicUrl: ${default-url}
+    properties:
+      SAP_JWT_TRUST_ACL: '[{"clientid" : "*", "identityzone" : "*"}]'
+
+resources:
+  - name: xsuaa
+    type: org.cloudfoundry.existing-service
+  - name: mongoLite
+    type: org.cloudfoundry.existing-service
+  - name: IASLog
+    type: org.cloudfoundry.existing-service
+  - name: LdapConnect
+    type: org.cloudfoundry.existing-service
+  - name: dest_FLP_MIT
+    type: org.cloudfoundry.existing-service
+  - name: IASFeatureFlag
+    type: org.cloudfoundry.existing-service
+  - name: dynatrace-service
+    type: org.cloudfoundry.existing-service
+    optional: true

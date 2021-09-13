@@ -1,0 +1,3 @@
+@Library('ias-ci-pipeline') _
+
+IAS_JAVA_CI()
